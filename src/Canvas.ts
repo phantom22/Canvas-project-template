@@ -1,5 +1,5 @@
 class Monitor {
-    /** How many frames after the page load should the fps detector wait? Default=5 */
+    /** How many frames after the page loads should the fps detector wait? Default=5 */
     static waitFrames = 5;
     /** Number of taken sample timestamps required for the fps detection. Default=10 */
     static fpsSamples = 10;
