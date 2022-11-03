@@ -43,7 +43,6 @@ class Monitor {
                         .slice(1) // remove timestamps[0] which is non relevant to the calculation
                         .reduce((a, b) => a + b) / (timestamps.length - 1) - Monitor.fpsCalculationEpsilon * 2; // divide the sum of the deltas by the sampleCount
                     let o;
-                    console.log(avg);
                     if (avg <= 2.777778)
                         o = 360;
                     else if (avg <= 4.166667)
