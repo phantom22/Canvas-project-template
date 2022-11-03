@@ -1,1 +1,1 @@
-const c = new Monitor("test");
+const c = new CanvasManager("test");
