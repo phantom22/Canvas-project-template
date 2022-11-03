@@ -1,6 +1,6 @@
 # Canvas-project-template
 
-Boilerplate project for a canvas project:
+Boilerplate for a canvas project:
 * fps detection
 * device type detection
 * implementation of deltaTime
