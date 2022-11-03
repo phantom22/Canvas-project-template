@@ -13,6 +13,15 @@ class Monitor {
         /** @ts-ignore */
         (navigator.userAgent||navigator.vendor||window.opera);
 
+    /** Max frames per second. Read-only.*/
+    fps:number;
+    /** Ideal time between two frames. Read-only. */
+    fixedDeltaTime:number;
+    /** Time took to render previous frame. */
+    deltaTime=0;
+    /** If true the canvas won't update (image and calculations paused). */
+    isPaused=true;
+
     constructor(id:string) {
         const c = document.getElementById(id);
         if (c instanceof HTMLCanvasElement) {
@@ -68,7 +77,18 @@ class Monitor {
         });
     }
     start(fps:number) {
-        console.log(fps);
+        Object.defineProperty(this,"fps",{value:fps,writable:false});
+        Object.defineProperty(this,"fixedDeltaTime",{value:1/fps,writable:false});
+        this.isPaused = false;
+        requestAnimationFrame(this.renderFrame.bind(this))
+    }
+    renderFrame(currFrame?:number,prevFrame?:number) {
+        if (!this.isPaused || !prevFrame) {
+            this.deltaTime = (currFrame - prevFrame) * 0.001;
+
+            // do something
+        }
+        requestAnimationFrame(nextFrame => this.renderFrame.call(this,nextFrame,currFrame));
     }
 }
 Object.defineProperty(Monitor,"isMobile",{writable:false});
