@@ -1,3 +1,7 @@
+type CanvasSettings = {
+    autoAdaptResolution?: boolean;
+};
+
 class CanvasManager {
     /** How many frames after the page loads should the fps detector wait? Default=5 */
     static waitFrames = 5;
@@ -22,15 +26,28 @@ class CanvasManager {
     /** If true the canvas won't update (image and calculations paused). */
     isPaused=true;
 
+    /** Canvas targeted by this class. */
+    #canvas:HTMLCanvasElement;
+    /** Rendering context 2d of the targeted canvas. */
+    #ctx:CanvasRenderingContext2D;
+    /** Should the targeted canvas width and height be adapted to clientWidth and clientHeight on window resize? */
+    autoAdaptResolution:boolean;
+
     physicsIntervalId:number;
     renderIntervalId:number;
 
-    constructor(id:string) {
+    constructor(id:string, settings?:CanvasSettings) {
         const c = document.getElementById(id);
         if (c instanceof HTMLCanvasElement) {
+            this.#canvas = c;
+            this.#ctx = c.getContext("2d");
+            this.#applySettings(settings);
             this.#init().then(v => this.start(v));
         }
         else throw `Couldn't find canvas with id '${id}'`;
+    }
+    #applySettings({autoAdaptResolution}:CanvasSettings={autoAdaptResolution:false}) {
+        this.autoAdaptResolution = autoAdaptResolution;
     }
     /** Method used to detect screen refresh rate. If refresh rate was already calculated => resolve with that value */
     #init(): Promise<number> {
@@ -91,7 +108,12 @@ class CanvasManager {
     fixedPhysicsStep() {
         // do something
     }
+    adaptResolution() {
+        if (!this.adaptResolution) return;
+    }
     renderFrame(currFrame?:DOMHighResTimeStamp,prevFrame?:DOMHighResTimeStamp) {
+        this.adaptResolution();
+
         if (!this.isPaused || !prevFrame) {
             this.deltaTime = (currFrame - prevFrame) * 0.001;
 
