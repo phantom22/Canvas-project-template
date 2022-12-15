@@ -3,6 +3,7 @@
 Boilerplate for a canvas project:
 * fps detection
 * device type detection
-* implementation of deltaTime
-* implementation of fixedDeltaTime loop
-* implementation of pausing the rendering
+* deltaTime loop
+* fixedDeltaTime loop
+* settings implementation
+* auto adapt canvas resolution on window resize
