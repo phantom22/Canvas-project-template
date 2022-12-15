@@ -1,4 +1,6 @@
 class CanvasManager {
+    /** Has the window been resized? */
+    static resizeEvent = false;
     /** How many frames after the page loads should the fps detector wait? Default=5 */
     static waitFrames = 5;
     /** Number of taken sample timestamps required for the fps detection. Default=10 */
@@ -19,15 +21,27 @@ class CanvasManager {
     deltaTime;
     /** If true the canvas won't update (image and calculations paused). */
     isPaused = true;
+    /** Canvas targeted by this class. */
+    #canvas;
+    /** Rendering context 2d of the targeted canvas. */
+    #ctx;
+    /** Should the targeted canvas width and height be adapted to clientWidth and clientHeight on window resize? */
+    autoAdaptResolution;
     physicsIntervalId;
     renderIntervalId;
-    constructor(id) {
+    constructor(id, settings) {
         const c = document.getElementById(id);
         if (c instanceof HTMLCanvasElement) {
+            this.#canvas = c;
+            this.#ctx = c.getContext("2d");
+            this.#applySettings(settings);
             this.#init().then(v => this.start(v));
         }
         else
             throw `Couldn't find canvas with id '${id}'`;
+    }
+    #applySettings({ autoAdaptResolution } = { autoAdaptResolution: false }) {
+        this.autoAdaptResolution = autoAdaptResolution;
     }
     /** Method used to detect screen refresh rate. If refresh rate was already calculated => resolve with that value */
     #init() {
@@ -94,7 +108,15 @@ class CanvasManager {
     fixedPhysicsStep() {
         // do something
     }
+    adaptResolution() {
+        if (!this.adaptResolution && !CanvasManager.resizeEvent)
+            return;
+        this.#canvas.width = window.innerWidth;
+        this.#canvas.height = window.innerHeight;
+        CanvasManager.resizeEvent = false;
+    }
     renderFrame(currFrame, prevFrame) {
+        this.adaptResolution();
         if (!this.isPaused || !prevFrame) {
             this.deltaTime = (currFrame - prevFrame) * 0.001;
             // do something
@@ -103,3 +125,4 @@ class CanvasManager {
     }
 }
 Object.defineProperty(CanvasManager, "isRunOnPhone", { writable: false });
+window.addEventListener("resize", () => CanvasManager.resizeEvent = true);

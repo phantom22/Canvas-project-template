@@ -1,1 +1,1 @@
-const c = new CanvasManager("test");
+const c = new CanvasManager("test",{autoAdaptResolution:true});
