@@ -1,6 +1,11 @@
 {
     "compilerOptions": {
         "target": "esnext",
-        "outFile": "../build/test.js"
-    }
+        "outFile": "../build/core.js"
+    },
+    "files": [
+        "fundamentals.ts",
+        "Vector2.ts",
+        "CanvasManager.ts"
+    ]
 }
