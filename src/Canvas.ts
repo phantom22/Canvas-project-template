@@ -121,11 +121,33 @@ class CanvasManager {
 
         if (!this.isPaused || !prevFrame) {
             this.deltaTime = (currFrame - prevFrame) * 0.001;
+            const {width,height} = this.#canvas;
+            this.ctx.fillStyle = "black";
+            this.ctx.fillRect(0,0,width,height);
 
-            // do something
-
+            this.drawObjects();
         }
         this.renderIntervalId = requestAnimationFrame(nextFrame => this.renderFrame.call(this,nextFrame,currFrame));
+    }
+    drawObjects() {
+        const ctx = this.ctx;
+        for (let i=0; i<this.objects.length; i++) {
+            const { radius, pos, isLightSource, rays } = this.objects[i];
+            ctx.fillStyle = isLightSource ? "white" : "black";
+            ctx.beginPath();
+            ctx.arc(...pos, radius, 0, PI2);
+            ctx.fill();
+            if (!isLightSource) return;
+            const rayAngle = Math.PI * 2 / rays;
+            for (let j=0; j<rays; j++) {
+                const currentAngle = rayAngle*j, rayLength = 990*1.1;
+                ctx.strokeStyle = "white";
+                ctx.beginPath();
+                ctx.moveTo(pos[0]+Math.cos(currentAngle)*radius, pos[1]+Math.sin(currentAngle)*radius);
+                ctx.lineTo(pos[0]+Math.cos(currentAngle)*rayLength, pos[1]+Math.sin(currentAngle)*rayLength);
+                ctx.stroke();
+            }
+        }
     }
 }
 Object.defineProperty(CanvasManager,"isRunOnPhone",{writable:false});
