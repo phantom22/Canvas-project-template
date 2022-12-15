@@ -3,6 +3,8 @@ type CanvasSettings = {
 };
 
 class CanvasManager {
+    /** Has the window been resized? */
+    static resizeEvent = false;
     /** How many frames after the page loads should the fps detector wait? Default=5 */
     static waitFrames = 5;
     /** Number of taken sample timestamps required for the fps detection. Default=10 */
@@ -109,7 +111,10 @@ class CanvasManager {
         // do something
     }
     adaptResolution() {
-        if (!this.adaptResolution) return;
+        if (!this.adaptResolution && !CanvasManager.resizeEvent) return;
+        this.#canvas.width = window.innerWidth;
+        this.#canvas.height = window.innerHeight;
+        CanvasManager.resizeEvent = false;
     }
     renderFrame(currFrame?:DOMHighResTimeStamp,prevFrame?:DOMHighResTimeStamp) {
         this.adaptResolution();
@@ -124,3 +129,5 @@ class CanvasManager {
     }
 }
 Object.defineProperty(CanvasManager,"isRunOnPhone",{writable:false});
+
+window.addEventListener("resize", () => CanvasManager.resizeEvent=true);
